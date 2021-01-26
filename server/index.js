@@ -1,15 +1,20 @@
 const path = require('path')
 const express = require('express')
+const socketio = require('socket.io')
 const morgan = require('morgan')
 const compression = require('compression')
-const session = require('express-session')
-const passport = require('passport')
-const SequelizeStore = require('connect-session-sequelize')(session.Store)
-const db = require('./db')
-const sessionStore = new SequelizeStore({db})
 const PORT = process.env.PORT || 8080
+const {SESSION_SECRET} = require('../secrets')
+const session_secret = SESSION_SECRET || process.env.SESSION_SECRET
+const {
+  spotifyLogin,
+  spotifyCallback,
+  spotifyRefreshToken,
+  getData
+} = require('./controller/spotifyController')
+
 const app = express()
-const socketio = require('socket.io')
+
 module.exports = app
 
 // This is a global Mocha hook, used for resource cleanup.
@@ -28,18 +33,6 @@ if (process.env.NODE_ENV === 'test') {
  */
 if (process.env.NODE_ENV !== 'production') require('../secrets')
 
-// passport registration
-passport.serializeUser((user, done) => done(null, user.id))
-
-passport.deserializeUser(async (id, done) => {
-  try {
-    const user = await db.models.user.findByPk(id)
-    done(null, user)
-  } catch (err) {
-    done(err)
-  }
-})
-
 const createApp = () => {
   // logging middleware
   app.use(morgan('dev'))
@@ -51,24 +44,33 @@ const createApp = () => {
   // compression middleware
   app.use(compression())
 
-  // session middleware with passport
-  app.use(
-    session({
-      secret: process.env.SESSION_SECRET || 'my best friend is Cody',
-      store: sessionStore,
-      resave: false,
-      saveUninitialized: false
-    })
-  )
-  app.use(passport.initialize())
-  app.use(passport.session())
-
-  // auth and api routes
-  app.use('/auth', require('./auth'))
-  app.use('/api', require('./api'))
-
   // static file-serving middleware
   app.use(express.static(path.join(__dirname, '..', 'public')))
+
+  // spotify auth login -> redirects to auth URL
+  // app.get('/login', (req, res, next) => {
+  //   spotifyLogin(req, res)
+  //   next()
+  // })
+
+  // auth URL -> redirects to /callback
+  app.get('/callback', async (req, res, next) => {
+    await spotifyCallback(req, res)
+    next()
+  })
+
+  // app.get('/refresh_token', async (req, res, next) => {
+  //   await spotifyRefreshToken(req, res)
+  //   next()
+  // })
+
+  // /callback -> redirects to /data
+  // app.get('/data', async (req, res, next) => {
+  //   const data = await getData()
+  //   console.log('avg data:', data)
+  //   res.redirect('/moodring')
+  //   next()
+  // })
 
   // any remaining requests with an extension (.js, .css, etc.) send 404
   app.use((req, res, next) => {
@@ -105,11 +107,7 @@ const startListening = () => {
   require('./socket')(io)
 }
 
-const syncDb = () => db.sync()
-
 async function bootApp() {
-  await sessionStore.sync()
-  await syncDb()
   await createApp()
   await startListening()
 }
