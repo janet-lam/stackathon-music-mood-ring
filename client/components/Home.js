@@ -5,8 +5,8 @@ import generateRandomString from '../../server/utils'
 import querystring from 'querystring'
 import {setData} from '../store/data'
 import {setUser} from '../store/user'
+import {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} from '../../secrets'
 
-const {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} = require('../../secrets')
 const client_id = CLIENT_ID || process.env.CLIENT_ID
 const client_secret = CLIENT_SECRET || process.env.CLIENT_SECRET
 const redirect_uri = REDIRECT_URI || process.env.REDIRECT_URI
