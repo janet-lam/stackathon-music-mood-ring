@@ -68,7 +68,7 @@ const createApp = () => {
   // app.get('/data', async (req, res, next) => {
   //   const data = await getData()
   //   console.log('avg data:', data)
-  //   res.redirect('/moodring')
+  //   res.redirect('/mood')
   //   next()
   // })
 

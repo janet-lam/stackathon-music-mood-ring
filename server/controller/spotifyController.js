@@ -47,7 +47,7 @@ const spotifyCallback = (req, res) => {
       console.log('Something went wrong!', err)
     }
   )
-  //   !! CHANGED FOR NOW (before /data)
+
   res.redirect('/')
 }
 
