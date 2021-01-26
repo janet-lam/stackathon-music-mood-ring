@@ -160,8 +160,8 @@ class Home extends React.Component {
         <div className="description-container">
           <p className="description">What's your current vibe?</p>
           <br />
-          <p className="description">This music mood ring can interpret what</p>
-          <p className="description">you have been recently listening to</p>
+          <p className="description">Music Mood Ring can interpret what you</p>
+          <p className="description">have been recently listening to</p>
           <p className="description">and give you a moody color.</p>
         </div>
         <a className="btn btn-primary start-button" href={authorizeURL}>
