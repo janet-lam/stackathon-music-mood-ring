@@ -81,7 +81,7 @@ class Mood extends React.Component {
 
     return (
       <div className={`mood-page ${colorClass}`}>
-        <h3 className="username">{this.props.user}</h3>
+        <p className="username">{this.props.user}</p>
         <div className="radar-chart-container">
           <canvas
             id="spotify-radar"
