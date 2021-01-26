@@ -5,11 +5,12 @@ import generateRandomString from '../../server/utils'
 import querystring from 'querystring'
 import {setData} from '../store/data'
 import {setUser} from '../store/user'
+
 import {CLIENT_ID, CLIENT_SECRET, REDIRECT_URI} from '../../secrets'
 
-const client_id = CLIENT_ID || process.env.CLIENT_ID
-const client_secret = CLIENT_SECRET || process.env.CLIENT_SECRET
-const redirect_uri = REDIRECT_URI || process.env.REDIRECT_URI
+const client_id = process.env.CLIENT_ID || CLIENT_ID
+const client_secret = process.env.CLIENT_SECRET || CLIENT_SECRET
+const redirect_uri = process.env.REDIRECT_URI || REDIRECT_URI
 
 const scope = 'user-read-private user-read-recently-played'
 const state = generateRandomString(16)
@@ -160,7 +161,7 @@ class Home extends React.Component {
         <div className="description-container">
           <p className="description">What's your current vibe?</p>
           <br />
-          <p className="description">Music Mood Ring can interpret what</p>
+          <p className="description">This music mood ring can interpret what</p>
           <p className="description">you have been recently listening to</p>
           <p className="description">and give you a moody color.</p>
         </div>
